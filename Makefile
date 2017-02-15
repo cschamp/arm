@@ -1,5 +1,7 @@
-all: first sum01 load01 store01
+EXECUTABLES=first sum01 load01 store01
+
+all: $(EXECUTABLES)
 
 clean:
-	rm -f first sum01 load01 store01
+	rm -f $(EXECUTABLES)
 
