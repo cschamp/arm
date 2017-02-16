@@ -7,5 +7,5 @@ fib.s: fib.c
 	$(CC) -g -S $+
 
 clean:
-	rm -f fib fib.o
+	rm -f fib fib.o fibtest.o
 
