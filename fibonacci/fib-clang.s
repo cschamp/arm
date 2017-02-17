@@ -44,42 +44,58 @@ fibonacci:                              @ @fibonacci
 	sub	sp, sp, #8
 .Ltmp0:
 	.cfi_def_cfa_offset 8
-      ; load r2 with value 1 (.LCPI0_0)
+      ; r2 = 1
 	ldr	r2, .LCPI0_0
-      ; load r3 with value 0 (.LCPI0_0)
+      ; r3 = 0
 	ldr	r3, .LCPI0_1
-      ; store r0 to stack (SP+4)
+      ; store r0 (int n) to stack (SP+4)
 	str	r0, [sp, #4]
-      ; store r1 to stack (SP+0)
+      ; store r1 (int *seq) to stack (SP+0)
 	str	r1, [sp]
 	.loc	1 16 4 prologue_end     @ fib.c:16:4
 .Ltmp1:
       ; *seq++ = 0;  /* F[0] */
+      ;     fetch pointer to 'seq' from stack, save in  r0
 	ldr	r0, [sp]
+      ;     add 4 (sizeof int) to seq pointer, save in r1
 	add	r1, r0, #4
+      ;     store newly incremented 'seq' pointer on stack
 	str	r1, [sp]
+      ;     store 0 at original 'seq' pointer
 	str	r3, [r0]
 	.loc	1 17 4                  @ fib.c:17:4
       ; *seq++ = 1;  /* F[1] */
+      ;     fetch pointer to 'seq' from stack, save in  r0
 	ldr	r0, [sp]
+      ;     add 4 (sizeof int) to seq pointer, save in r1
 	add	r1, r0, #4
+      ;     store newly incremented 'seq' pointer on stack
 	str	r1, [sp]
+      ;     store 1 at original 'seq' pointer
 	str	r2, [r0]
 	.loc	1 18 4                  @ fib.c:18:4
       ; n -= 2;
+      ;     fetch 'n' param from stack, save in r0
 	ldr	r0, [sp, #4]
+      ;     subtract 2 from 'n' and save in r0
 	sub	r0, r0, #2
+      ;     store new value of 'n' on stack
 	str	r0, [sp, #4]
 .LBB0_1:                                @ =>This Inner Loop Header: Depth=1
-      ; load r0 with -f (0xffffffff)
+      ; load r0 with -1 (0xffffffff)
 	ldr	r0, .LCPI0_2
 	.loc	1 19 4 discriminator 1  @ fib.c:19:4
 .Ltmp2:
       ; while (n-- > 0) {
+      ;     load 'n' into r1 from stack
 	ldr	r1, [sp, #4]
+      ;     add -1 to 'n' and store in r0
 	add	r0, r1, r0
+      ;     store newly decremented 'n' back on stack
 	str	r0, [sp, #4]
+      ;     compare r1 ('n' before decrement) to 0
 	cmp	r1, #0
+      ;     if 'n' is less than or equal to 0, exit loop
 	ble	.LBB0_3
 .Ltmp3:
 @ BB#2:                                 @   in Loop: Header=BB0_1 Depth=1
@@ -122,8 +138,10 @@ fibonacci:                              @ @fibonacci
 .LCPI0_2:
 	.long	4294967295              @ 0xffffffff
 .LCPI0_3:
+      ;            constant -8
 	.long	4294967288              @ 0xfffffff8
 .LCPI0_4:
+      ;            constant -4
 	.long	4294967292              @ 0xfffffffc
 .Ltmp7:
 	.size	fibonacci, .Ltmp7-fibonacci
